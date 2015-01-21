@@ -39,7 +39,7 @@ public class Green1 extends Algorithm {
     }
 
     @Override
-    public void run(info.arindam.neb.Engine.Negative negative) {
+    public void run(Engine.Negative negative) { // TODO: Use "advanced probabilistic techniques".
         int[][] buffer = negative.buffer;
         int sampleSize = (int) negative.data.get("sample_size");
         for (int i = 1; i <= sampleSize; i++) {
@@ -77,13 +77,13 @@ public class Green1 extends Algorithm {
     }
 
     @Override
-    public void process(info.arindam.neb.Engine.Negative[] negatives, info.arindam.neb.Engine.Positive positive) {
+    public void process(Engine.Negative[] negatives, Engine.Positive positive) {
         int[][] histogram = new int[negatives[0].buffer.length][negatives[0].buffer[0].length];
         int max = 0; // holds the maximum of all values in the "histogram"
 
         for (int i = 0; i < histogram.length; i++) {
             for (int j = 0; j < histogram[0].length; j++) {
-                for (info.arindam.neb.Engine.Negative negative : negatives) {
+                for (Engine.Negative negative : negatives) {
                     histogram[i][j] += negative.buffer[i][j];
                 }
                 max = max < histogram[i][j] ? histogram[i][j] : max;

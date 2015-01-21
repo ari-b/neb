@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
-public class Engine {
+public class Engine { // TODO: Make static methods instance methods.
     public static class Positive extends BufferedImage {
         public int[] buffer;
 

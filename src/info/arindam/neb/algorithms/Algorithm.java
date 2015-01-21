@@ -12,6 +12,6 @@ public abstract class Algorithm {
         public static HashMap<String, Object> getDefaultParameters() {
             return null;
         }
-        public abstract void run(info.arindam.neb.Engine.Negative negative);
-        public abstract void process(info.arindam.neb.Engine.Negative[] negatives, info.arindam.neb.Engine.Positive positive);
+        public abstract void run(Engine.Negative negative);
+        public abstract void process(Engine.Negative[] negatives, Engine.Positive positive);
 }
