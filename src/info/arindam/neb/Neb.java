@@ -1,18 +1,25 @@
 package info.arindam.neb;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
 public class Neb extends javax.swing.JPanel implements Engine.Listener {
 
+    private Engine e;
+
     /**
      * Creates new form Neb
      */
     public Neb() {
         initComponents();
-        Engine.initialize();
-        Engine.render(this);
+        e = new Engine(this);
+        e.setAlgorithm((String) algorithmList.getSelectedItem());
+        e.render();
     }
 
     /**
@@ -24,37 +31,235 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
     private void initComponents() {
 
         jTextField1 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jPanel3 = new javax.swing.JPanel();
+        algorithmLabel = new javax.swing.JLabel();
+        algorithmList = new javax.swing.JComboBox();
+        parameterLabel = new javax.swing.JLabel();
+        parameter1Label = new javax.swing.JLabel();
+        parameter2Label = new javax.swing.JLabel();
+        parameter3Label = new javax.swing.JLabel();
+        parameter4Label = new javax.swing.JLabel();
+        parameter5Label = new javax.swing.JLabel();
+        parameter6Label = new javax.swing.JLabel();
+        parameter7Label = new javax.swing.JLabel();
+        parameter8Label = new javax.swing.JLabel();
+        parameter9Label = new javax.swing.JLabel();
+        parameter10Label = new javax.swing.JLabel();
+        parameter1Value = new javax.swing.JTextField();
+        parameter2Value = new javax.swing.JTextField();
+        parameter3Value = new javax.swing.JTextField();
+        parameter4Value = new javax.swing.JTextField();
+        parameter5Value = new javax.swing.JTextField();
+        parameter6Value = new javax.swing.JTextField();
+        parameter7Value = new javax.swing.JTextField();
+        parameter8Value = new javax.swing.JTextField();
+        parameter9Value = new javax.swing.JTextField();
+        parameter10Value = new javax.swing.JTextField();
+        resetButton = new javax.swing.JButton();
+        applyButton = new javax.swing.JButton();
+        logLabel = new javax.swing.JLabel();
+        renderButton = new javax.swing.JButton();
+        statusLabel = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
 
         jTextField1.setText("jTextField1");
 
-        jLabel1.setText("jLabel1");
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setPreferredSize(new java.awt.Dimension(640, 640));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 636, Short.MAX_VALUE)
+            .addGap(0, 640, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 636, Short.MAX_VALUE)
+            .addGap(0, 640, Short.MAX_VALUE)
         );
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setBackground(new java.awt.Color(39, 40, 34));
-        jTextArea1.setColumns(24);
-        jTextArea1.setForeground(new java.awt.Color(255, 255, 255));
-        jTextArea1.setRows(5);
-        jTextArea1.setCaretColor(new java.awt.Color(226, 136, 136));
-        jScrollPane2.setViewportView(jTextArea1);
+        algorithmLabel.setFont(algorithmLabel.getFont().deriveFont(algorithmLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        algorithmLabel.setText("Algorithm");
+
+        algorithmList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "green_1", "green_2" }));
+        algorithmList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                algorithmListActionPerformed(evt);
+            }
+        });
+
+        parameterLabel.setFont(parameterLabel.getFont().deriveFont(parameterLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        parameterLabel.setText("Parameters");
+
+        parameter1Label.setText("1");
+
+        parameter2Label.setText("2");
+
+        parameter3Label.setText("3");
+
+        parameter4Label.setText("4");
+
+        parameter5Label.setText("5");
+
+        parameter6Label.setText("6");
+
+        parameter7Label.setText("7");
+
+        parameter8Label.setText("8");
+
+        parameter9Label.setText("9");
+
+        parameter10Label.setText("10");
+
+        parameter1Value.setText("--");
+
+        parameter2Value.setText("--");
+
+        parameter3Value.setText("--");
+
+        parameter4Value.setText("--");
+
+        parameter5Value.setText("--");
+
+        parameter6Value.setText("--");
+
+        parameter7Value.setText("--");
+
+        parameter8Value.setText("--");
+
+        parameter9Value.setText("--");
+
+        parameter10Value.setText("--");
+
+        resetButton.setText("Reset");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetButtonActionPerformed(evt);
+            }
+        });
+
+        applyButton.setText("Apply");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
+            }
+        });
+
+        logLabel.setFont(logLabel.getFont().deriveFont(logLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        logLabel.setText("Log");
+
+        renderButton.setText("Render");
+        renderButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                renderButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(logLabel)
+                        .addContainerGap(235, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(algorithmLabel)
+                            .addComponent(parameter1Label)
+                            .addComponent(parameter2Label)
+                            .addComponent(parameter3Label)
+                            .addComponent(parameter4Label)
+                            .addComponent(parameter5Label)
+                            .addComponent(parameter6Label)
+                            .addComponent(parameter7Label)
+                            .addComponent(parameter8Label)
+                            .addComponent(parameter9Label)
+                            .addComponent(parameterLabel)
+                            .addComponent(parameter10Label))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(parameter10Value)
+                                .addComponent(parameter9Value, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                                .addComponent(parameter8Value)
+                                .addComponent(parameter7Value)
+                                .addComponent(parameter6Value)
+                                .addComponent(parameter5Value)
+                                .addComponent(parameter4Value)
+                                .addComponent(parameter3Value)
+                                .addComponent(parameter2Value)
+                                .addComponent(parameter1Value))
+                            .addComponent(algorithmList, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(renderButton))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(resetButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(applyButton))))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(algorithmLabel)
+                    .addComponent(algorithmList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
+                .addComponent(parameterLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter1Label)
+                    .addComponent(parameter1Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter2Label)
+                    .addComponent(parameter2Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter3Label)
+                    .addComponent(parameter3Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter4Label)
+                    .addComponent(parameter4Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter5Label)
+                    .addComponent(parameter5Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter6Label)
+                    .addComponent(parameter6Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter7Label)
+                    .addComponent(parameter7Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter8Label)
+                    .addComponent(parameter8Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter9Label)
+                    .addComponent(parameter9Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter10Label)
+                    .addComponent(parameter10Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(resetButton)
+                    .addComponent(applyButton))
+                .addGap(18, 18, 18)
+                .addComponent(logLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                .addComponent(renderButton))
+        );
+
+        statusLabel.setText("Idle.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -64,44 +269,86 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(statusLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(statusLabel)
+                    .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void algorithmListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algorithmListActionPerformed
+        e.setAlgorithm((String) algorithmList.getSelectedItem());
+    }//GEN-LAST:event_algorithmListActionPerformed
+
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        e.resetParameters();
+    }//GEN-LAST:event_resetButtonActionPerformed
+
+    private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        System.out.println("Apply button clicked.");
+    }//GEN-LAST:event_applyButtonActionPerformed
+
+    private void renderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renderButtonActionPerformed
+        e.render();
+    }//GEN-LAST:event_renderButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel algorithmLabel;
+    private javax.swing.JComboBox algorithmList;
+    private javax.swing.JButton applyButton;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel logLabel;
+    private javax.swing.JLabel parameter10Label;
+    private javax.swing.JTextField parameter10Value;
+    private javax.swing.JLabel parameter1Label;
+    private javax.swing.JTextField parameter1Value;
+    private javax.swing.JLabel parameter2Label;
+    private javax.swing.JTextField parameter2Value;
+    private javax.swing.JLabel parameter3Label;
+    private javax.swing.JTextField parameter3Value;
+    private javax.swing.JLabel parameter4Label;
+    private javax.swing.JTextField parameter4Value;
+    private javax.swing.JLabel parameter5Label;
+    private javax.swing.JTextField parameter5Value;
+    private javax.swing.JLabel parameter6Label;
+    private javax.swing.JTextField parameter6Value;
+    private javax.swing.JLabel parameter7Label;
+    private javax.swing.JTextField parameter7Value;
+    private javax.swing.JLabel parameter8Label;
+    private javax.swing.JTextField parameter8Value;
+    private javax.swing.JLabel parameter9Label;
+    private javax.swing.JTextField parameter9Value;
+    private javax.swing.JLabel parameterLabel;
+    private javax.swing.JProgressBar progressBar;
+    private javax.swing.JButton renderButton;
+    private javax.swing.JButton resetButton;
+    private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void renderingBegun() {
-        System.out.println("renderingBegun()");
+        statusLabel.setText("Rendering begun.");
+        progressBar.setIndeterminate(true);
     }
 
     @Override
@@ -116,12 +363,90 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
 
     @Override
     public void renderingEnded() {
-        System.out.println("renderingEnded()");
-        jPanel1.getGraphics().drawImage(Engine.getPositive(), 0, 0, null);
+        jPanel1.getGraphics().drawImage(e.getPositive(), 0, 0, null);
+        progressBar.setIndeterminate(false);
+        statusLabel.setText("Rendering ended.");
     }
 
     @Override
     public void errorOccurred() {
 
+    }
+
+    @Override
+    public void algorithmSet(HashMap<String, String> newParameters) {
+        Iterator i = newParameters.entrySet().iterator();
+        Map.Entry p = (Map.Entry) i.next();
+        parameter1Label.setText((String) p.getKey());
+        parameter1Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter2Label.setText((String) p.getKey());
+        parameter2Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter3Label.setText((String) p.getKey());
+        parameter3Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter4Label.setText((String) p.getKey());
+        parameter4Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter5Label.setText((String) p.getKey());
+        parameter5Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter6Label.setText((String) p.getKey());
+        parameter6Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter7Label.setText((String) p.getKey());
+        parameter7Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter8Label.setText((String) p.getKey());
+        parameter8Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter9Label.setText((String) p.getKey());
+        parameter9Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter10Label.setText((String) p.getKey());
+        parameter10Value.setText((String) p.getValue());
+        statusLabel.setText("Algorithm set.");
+    }
+
+    @Override
+    public void parametersSet() {
+        statusLabel.setText("Parameters set.");
+    }
+
+    @Override
+    public void parametersReset(HashMap<String, String> newParameters) {
+        Iterator i = newParameters.entrySet().iterator();
+        Map.Entry p = (Map.Entry) i.next();
+        parameter1Label.setText((String) p.getKey());
+        parameter1Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter2Label.setText((String) p.getKey());
+        parameter2Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter3Label.setText((String) p.getKey());
+        parameter3Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter4Label.setText((String) p.getKey());
+        parameter4Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter5Label.setText((String) p.getKey());
+        parameter5Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter6Label.setText((String) p.getKey());
+        parameter6Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter7Label.setText((String) p.getKey());
+        parameter7Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter8Label.setText((String) p.getKey());
+        parameter8Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter9Label.setText((String) p.getKey());
+        parameter9Value.setText((String) p.getValue());
+        p = (Map.Entry) i.next();
+        parameter10Label.setText((String) p.getKey());
+        parameter10Value.setText((String) p.getValue());
+        statusLabel.setText("Parameters reset.");
     }
 }

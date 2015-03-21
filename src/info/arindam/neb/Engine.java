@@ -3,7 +3,6 @@ package info.arindam.neb;
 import info.arindam.neb.algorithms.Algorithm;
 import info.arindam.neb.algorithms.Green1;
 import info.arindam.neb.algorithms.Green2;
-import info.arindam.neb.algorithms.Multi;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.HashMap;
@@ -15,8 +14,10 @@ import java.util.logging.Logger;
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
-public class Engine { // TODO: Make static methods instance methods.
+public class Engine {
+
     public static class Positive extends BufferedImage {
+
         public int[] buffer;
 
         public Positive(int width, int height) {
@@ -30,7 +31,7 @@ public class Engine { // TODO: Make static methods instance methods.
      vary depending on the algorithm. Multiple negatives are combined to obtain a 'positive',
      i.e. the final image.
      */
-    public static class Negative {
+    public class Negative {
 
         // #buffer holds the output of the thread this negative is assigned to.
         public int[][] buffer;
@@ -44,7 +45,7 @@ public class Engine { // TODO: Make static methods instance methods.
         }
     }
 
-    private static class NebThread extends Thread {
+    private class NebThread extends Thread {
 
         boolean canRun;
         LinkedBlockingQueue<Task> taskQueue;
@@ -61,10 +62,10 @@ public class Engine { // TODO: Make static methods instance methods.
                     if (canRun) {
                         Task task = taskQueue.take();
                         task.run();
-                        Engine.taskCompleted(task);
+                        taskCompleted(task);
                     } else {
                         synchronized (nebThreadLock) {
-                            Engine.sleeping();
+                            sleeping();
                             nebThreadLock.wait();
                         }
                     }
@@ -75,7 +76,7 @@ public class Engine { // TODO: Make static methods instance methods.
         }
     }
 
-    static void sleeping() {
+    void sleeping() {
         synchronized (engineLock) {
             sleepingThreadCount++;
             if (sleepingThreadCount == threads.length) {
@@ -85,7 +86,7 @@ public class Engine { // TODO: Make static methods instance methods.
         }
     }
 
-    static void taskCompleted(Task task) {
+    void taskCompleted(Task task) {
         if (task.iteration < task.iterationGoal) {
             task.iteration++;
             taskQueue.add(task);
@@ -99,7 +100,8 @@ public class Engine { // TODO: Make static methods instance methods.
         }
     }
 
-    private static class Task {
+    private class Task {
+
         Algorithm algorithm;
         Negative negative;
         int iteration, iterationGoal;
@@ -127,30 +129,31 @@ public class Engine { // TODO: Make static methods instance methods.
         public void renderingEnded();
 
         public void errorOccurred();
+
+        public void algorithmSet(HashMap<String, String> newParameters);
+
+        public void parametersSet();
+
+        public void parametersReset(HashMap<String, String> newParameters);
     }
 
-    private static int taskSampleSize, developedNegativeCount, sleepingThreadCount, rasterWidth,
-            rasterHeight;
-    private static Negative[] negatives;
-    private static Positive positive;
-    private static LinkedBlockingQueue<Task> taskQueue;
-    private static NebThread[] threads;
-    private static final Object nebThreadLock = new Object(), engineLock = new Object();
-    private static HashMap<String, Object> parameters;
-    private static Algorithm algorithm;
-    private static Listener listener;
-    private static boolean renderInProgress, canRun;
+    private static int developedNegativeCount, sleepingThreadCount, rasterWidth, rasterHeight,
+            processorCount;
+    private Negative[] negatives;
+    private Positive positive;
+    private LinkedBlockingQueue<Task> taskQueue;
+    private NebThread[] threads;
+    private final Object nebThreadLock = new Object(), engineLock = new Object();
+    private Algorithm algorithm;
+    private Listener listener;
+    private boolean renderInProgress, canRun;
 
-    public static void initialize() {
-        threads = new NebThread[Runtime.getRuntime().availableProcessors()];
-        taskSampleSize = 1000;
-        rasterWidth = rasterHeight = 640;
-        renderInProgress = false;
-        negatives = null;
-        positive = null;
-        listener = null;
-        parameters = Green1.getDefaultParameters();
-        algorithm = new Green1(parameters);
+    public Engine(Listener listener) {
+        processorCount = Runtime.getRuntime().availableProcessors();
+        threads = new NebThread[processorCount];
+        rasterWidth = rasterHeight = 640; // TODO: Fix redundancy.
+        renderInProgress = canRun = false;
+        this.listener = listener;
         taskQueue = new LinkedBlockingQueue<>();
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new NebThread(taskQueue);
@@ -158,20 +161,9 @@ public class Engine { // TODO: Make static methods instance methods.
         }
     }
 
-    public static boolean setParameter(String parameter, Object value) {
-        if (parameters.containsKey(parameter)) {
-            parameters.put(parameter, value);
-            return true;
-        } else {
-            return false;
-        }
-    }
+    private static Algorithm getAlgorithmInstance(String name, HashMap<String, String> parameters) {
+        Algorithm algorithm;
 
-    public static String getParameterString() {
-        return parameters.toString();
-    }
-
-    public static boolean setAlgorithm(String name) {
         switch (name) {
             case "green_1":
                 algorithm = new Green1(parameters);
@@ -179,28 +171,65 @@ public class Engine { // TODO: Make static methods instance methods.
             case "green_2":
                 algorithm = new Green2(parameters);
                 break;
-            case "multi":
-                algorithm = new Multi(parameters);
             default:
-                return false;
+                algorithm = null;
         }
+        return algorithm;
+    }
+
+    private static HashMap<String, String> getAlgorithmDefaultParameters(String name) {
+        switch (name) {
+            case "green_1":
+                return Green1.DEFAULT_PARAMETERS;
+            case "green_2":
+                return Green2.DEFAULT_PARAMETERS;
+            default:
+                return null;
+        }
+    }
+
+    public boolean setAlgorithm(String name) { // TODO: Replace boolean signal with exception.
+        HashMap<String, String> parameters = getAlgorithmDefaultParameters(name);
+        algorithm = getAlgorithmInstance(name, parameters);
+
+        listener.algorithmSet(parameters);
         return true;
     }
 
-    public static void render(Listener listener) {
-        Engine.listener = listener;
-        int multiplier = algorithm.getNegativeMultiplier();
+    public String getAlgorithm() {
+        return algorithm.toString();
+    }
+
+    public boolean setParameters(HashMap<String, String> parameters) {
+        // TODO: Check parameter sanity.
+        algorithm = getAlgorithmInstance(algorithm.toString(), parameters);
+
+        listener.parametersSet();
+        return true;
+    }
+
+    public void resetParameters() {
+        HashMap<String, String> parameters = getAlgorithmDefaultParameters(algorithm.toString());
+        algorithm = getAlgorithmInstance(algorithm.toString(), parameters);
+
+        listener.parametersReset(parameters);
+    }
+
+    public HashMap<String, String> getParameters() {
+        return null;
+    }
+
+    public void render() {
+        int multiplier = algorithm.getNegativeMultiplier(processorCount);
         negatives = new Negative[threads.length * multiplier];
         positive = new Positive(rasterWidth, rasterHeight);
         developedNegativeCount = 0;
         sleepingThreadCount = 0;
         renderInProgress = canRun = true;
         listener.renderingBegun();
-        int i = 0, j = 0, taskIterationGoal = ((int) parameters.get("sample_size"))
-                / (negatives.length * taskSampleSize);
+        int i = 0, j = 0, taskIterationGoal = algorithm.getTaskIterationGoal(processorCount);
         while (i < negatives.length) {
             negatives[i] = new Negative(rasterWidth, rasterHeight);
-            negatives[i].data.put("sample_size", taskSampleSize);
             negatives[i].data.put("class", j);
             taskQueue.add(new Task(negatives[i], algorithm, taskIterationGoal));
             i++;
@@ -208,8 +237,8 @@ public class Engine { // TODO: Make static methods instance methods.
         }
     }
 
-    // Returns the (partially) rendered positive or null, if no rendering has been done yet
-    public static Positive getPositive() {
+    // Returns the (partially) rendered positive or null, if no rendering has been done yet.
+    public Positive getPositive() {
         if (renderInProgress) {
             synchronized (engineLock) {
                 for (NebThread thread : threads) {
@@ -238,9 +267,5 @@ public class Engine { // TODO: Make static methods instance methods.
         } else {
             return positive;
         }
-    }
-
-    public static void purge() {
-
     }
 }

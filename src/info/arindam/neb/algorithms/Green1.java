@@ -8,18 +8,34 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
-public class Green1 extends Algorithm {
-
-    private final int iterationLimit, colourShift;
+public class Green1 implements Algorithm {
+    public static final HashMap<String, String> DEFAULT_PARAMETERS;
+    private static final int TASK_SAMPLE_SIZE = 100;
+    private final int iterationLimit, colourShift, sampleSize;
     private final double minX, minY, rangeX, rangeY, escapeDistance;
 
-    public Green1(HashMap<String, Object> parameters) {
-        minX = (double) parameters.get("min_x");
-        minY = (double) parameters.get("min_y");
-        rangeX = (double) parameters.get("range_x");
-        rangeY = (double) parameters.get("range_y");
-        iterationLimit = (int) parameters.get("iteration_limit");
-        escapeDistance = (double) parameters.get("escape_distance");
+    static {
+        DEFAULT_PARAMETERS = new HashMap<>();
+        DEFAULT_PARAMETERS.put("min_x", "-2.0");
+        DEFAULT_PARAMETERS.put("min_y", "-1.5");
+        DEFAULT_PARAMETERS.put("range_x", "3.0");
+        DEFAULT_PARAMETERS.put("range_y", "3.0");
+        DEFAULT_PARAMETERS.put("sample_size", "10000000");
+        DEFAULT_PARAMETERS.put("iteration_limit", "100");
+        DEFAULT_PARAMETERS.put("escape_distance", "2.0");
+        DEFAULT_PARAMETERS.put("colour", "blue");
+        DEFAULT_PARAMETERS.put("degree", "2");
+        DEFAULT_PARAMETERS.put("--", "--");
+    }
+
+    public Green1(HashMap<String, String> parameters) {
+        minX = Double.parseDouble(parameters.get("min_x"));
+        minY = Double.parseDouble(parameters.get("min_y"));
+        rangeX = Double.parseDouble(parameters.get("range_x"));
+        rangeY = Double.parseDouble(parameters.get("range_y"));
+        iterationLimit = Integer.parseInt(parameters.get("iteration_limit"));
+        sampleSize = Integer.parseInt(parameters.get("sample_size"));
+        escapeDistance = Double.parseDouble(parameters.get("escape_distance"));
         String colour = (String) parameters.get("colour");
         switch (colour) {
             case "red":
@@ -34,15 +50,14 @@ public class Green1 extends Algorithm {
     }
 
     @Override
-    public int getNegativeMultiplier() {
+    public int getNegativeMultiplier(int processorCount) {
         return 1;
     }
 
     @Override
     public void run(Engine.Negative negative) { // TODO: Use "advanced probabilistic techniques".
         int[][] buffer = negative.buffer;
-        int sampleSize = (int) negative.data.get("sample_size");
-        for (int i = 1; i <= sampleSize; i++) {
+        for (int i = 1; i <= TASK_SAMPLE_SIZE; i++) {
             int j, bufferX, bufferY; // location of (zR, zI) in histogram
             double cR, cI, zR, zI, p;
             // use ThreadLocalRandom for improved performance
@@ -79,7 +94,7 @@ public class Green1 extends Algorithm {
     @Override
     public void process(Engine.Negative[] negatives, Engine.Positive positive) {
         int[][] histogram = new int[negatives[0].buffer.length][negatives[0].buffer[0].length];
-        int max = 0; // holds the maximum of all values in the "histogram"
+        int max = 0; // Holds the maximum of all values in the "histogram".
 
         for (int i = 0; i < histogram.length; i++) {
             for (int j = 0; j < histogram[0].length; j++) {
@@ -98,17 +113,13 @@ public class Green1 extends Algorithm {
         }
     }
 
-    public static HashMap<String, Object> getDefaultParameters() {
-        HashMap<String, Object> parameters = new HashMap();
-        parameters.put("min_x", -2.0);
-        parameters.put("min_y", -1.5);
-        parameters.put("range_x", 3.0);
-        parameters.put("range_y", 3.0);
-        parameters.put("sample_size", 10000000);
-        parameters.put("iteration_limit", 100);
-        parameters.put("escape_distance", 2.0);
-        parameters.put("colour", "blue");
-        parameters.put("degree", 2);
-        return parameters;
+    @Override
+    public String toString() {
+        return "green_1";
+    }
+
+    @Override
+    public int getTaskIterationGoal(int processorCount) {
+        return sampleSize / (TASK_SAMPLE_SIZE * processorCount);
     }
 }
