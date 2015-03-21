@@ -1,11 +1,13 @@
 package info.arindam.neb;
 
 import info.arindam.neb.algorithms.Algorithm;
-import info.arindam.neb.algorithms.Green1;
-import info.arindam.neb.algorithms.Green2;
+import info.arindam.neb.algorithms.BBrot;
+import info.arindam.neb.algorithms.MBrot;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
@@ -35,14 +37,13 @@ public class Engine { // TODO: Add safeguards.
     public class Negative {
 
         // #buffer holds the output of the thread this negative is assigned to.
-        public int[][] buffer;
+        public Object buffer;
         // #data holds any other data that the algorithm might need.
-        public LinkedHashMap<String, Object> data;
+        public HashMap<String, Object> data;
 
-        Negative(Dimension rasterSize) {
-            super();
-            buffer = new int[rasterSize.width][rasterSize.height];
-            data = new LinkedHashMap();
+        Negative(Object buffer) {
+            this.buffer = buffer;
+            data = new HashMap<>();
         }
     }
 
@@ -91,11 +92,12 @@ public class Engine { // TODO: Add safeguards.
         if (task.iteration < task.iterationGoal) {
             task.iteration++;
             taskQueue.add(task);
+            listener.negativeRendered();
         } else {
             developedNegativeCount++;
             if (developedNegativeCount == negatives.length) {
                 algorithm.process(negatives, positive);
-                renderInProgress = false;
+                renderInProgress = canRun = false;
                 listener.renderingEnded();
             }
         }
@@ -120,7 +122,10 @@ public class Engine { // TODO: Add safeguards.
     }
 
     public static interface Listener {
+
         public void renderingBegun();
+
+        public void negativeRendered();
 
         public void renderingPaused();
 
@@ -148,7 +153,7 @@ public class Engine { // TODO: Add safeguards.
     private final Object nebThreadLock = new Object(), engineLock = new Object();
     private Algorithm algorithm;
     private final Listener listener;
-    private boolean renderInProgress, canRun;
+    private boolean renderInProgress, canRun, processingPositive;
 
     public Engine(Listener listener) {
         threads = new NebThread[Runtime.getRuntime().availableProcessors()]; // One thread each.
@@ -158,70 +163,78 @@ public class Engine { // TODO: Add safeguards.
         taskQueue = new LinkedBlockingQueue<>();
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new NebThread(taskQueue);
-            threads[i].start();
+            threads[i].start(); // TODO: Examine this.
         }
     }
 
-    private static Algorithm getAlgorithmInstance(String name, LinkedHashMap<String, String> parameters) {
-        Algorithm algorithm;
-
+    private static Class getAlgorithmClass(String name) {
         switch (name) {
-            case "green_1":
-                algorithm = new Green1(parameters);
-                break;
-            case "green_2":
-                algorithm = new Green2(parameters);
-                break;
-            default:
-                algorithm = null;
-        }
-        return algorithm;
-    }
-
-    private static LinkedHashMap<String, String> getAlgorithmDefaultParameters(String name) {
-        switch (name) {
-            case "green_1":
-                return Green1.DEFAULT_PARAMETERS;
-            case "green_2":
-                return Green2.DEFAULT_PARAMETERS;
+            case "bbrot":
+                return BBrot.class;
+            case "mbrot":
+                return MBrot.class;
             default:
                 return null;
         }
+    }
+
+    private static Algorithm createAlgorithmInstance(Class algorithmClass,
+            LinkedHashMap<String, String> parameters) {
+        try {
+            return (Algorithm) algorithmClass.getConstructors()[0].newInstance(parameters);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException |
+                InvocationTargetException ex) {
+            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    private static LinkedHashMap<String, String> getAlgorithmDefaultParameters(Class algorithmClass) {
+        try {
+            return (LinkedHashMap<String, String>) algorithmClass.getField("DEFAULT_PARAMETERS").
+                    get(null);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException |
+                SecurityException ex) {
+            Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 
     public void setRasterSize(Dimension rasterSize) {
         this.rasterSize = rasterSize;
     }
 
-    public boolean setAlgorithm(String name) { // TODO: Replace boolean signal with exception.
-        LinkedHashMap<String, String> parameters = getAlgorithmDefaultParameters(name);
-        algorithm = getAlgorithmInstance(name, parameters);
+    public void setAlgorithm(String name) { // TODO: Replace boolean signal with exception.
+        Class algorithmClass = getAlgorithmClass(name);
+        LinkedHashMap<String, String> parameters = getAlgorithmDefaultParameters(algorithmClass);
+        algorithm = createAlgorithmInstance(algorithmClass, parameters);
 
         listener.algorithmSet(parameters);
-        return true;
     }
 
     public String getAlgorithm() {
         return algorithm.toString();
     }
 
-    public boolean setParameters(LinkedHashMap<String, String> parameters) {
+    public void setParameters(LinkedHashMap<String, String> parameters) {
         // TODO: Check parameter sanity.
-        algorithm = getAlgorithmInstance(algorithm.toString(), parameters);
+        algorithm = createAlgorithmInstance(getAlgorithmClass(algorithm.toString()), parameters);
 
         listener.parametersSet();
-        return true;
     }
 
     public void resetParameters() {
-        LinkedHashMap<String, String> parameters = getAlgorithmDefaultParameters(algorithm.toString());
-        algorithm = getAlgorithmInstance(algorithm.toString(), parameters);
+        Class algorithmClass = getAlgorithmClass(algorithm.toString());
+        LinkedHashMap<String, String> parameters = getAlgorithmDefaultParameters(algorithmClass);
+        algorithm = createAlgorithmInstance(algorithmClass, parameters);
 
         listener.parametersReset(parameters);
     }
 
     public LinkedHashMap<String, String> getParameters() {
-        return null;
+        return getAlgorithmDefaultParameters(getAlgorithmClass(algorithm.toString()));
     }
 
     public void render() {
@@ -235,8 +248,8 @@ public class Engine { // TODO: Add safeguards.
         listener.renderingBegun();
         int i = 0, j = 0, taskIterationGoal = algorithm.getTaskIterationGoal(processorCount);
         while (i < negatives.length) {
-            negatives[i] = new Negative(rasterSize);
-            negatives[i].data.put("class", j);
+            negatives[i] = new Negative(algorithm.createNegativeBuffer(rasterSize));
+            negatives[i].data.put("residue_class", j);
             taskQueue.add(new Task(negatives[i], algorithm, taskIterationGoal));
             i++;
             j = (j + 1) % multiplier;
@@ -245,14 +258,13 @@ public class Engine { // TODO: Add safeguards.
                 rasterSize.height, negatives.length));
     }
 
-    // Returns the (partially) rendered positive or null, if no rendering has been done yet.
     public Positive getPositive() {
         if (renderInProgress) {
+            canRun = false;
+            for (NebThread thread : threads) {
+                thread.canRun = false;
+            }
             synchronized (engineLock) {
-                for (NebThread thread : threads) {
-                    thread.canRun = false;
-                }
-                canRun = false;
                 try {
                     while (!canRun) {
                         engineLock.wait();
@@ -260,17 +272,17 @@ public class Engine { // TODO: Add safeguards.
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Engine.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                listener.renderingPaused();
-                algorithm.process(negatives, positive);
-                for (NebThread thread : threads) {
-                    thread.canRun = true;
-                }
-                sleepingThreadCount = 0;
             }
+            listener.renderingPaused();
+            algorithm.process(negatives, positive);
+            for (NebThread thread : threads) {
+                thread.canRun = true;
+            }
+            sleepingThreadCount = 0;
             synchronized (nebThreadLock) {
                 nebThreadLock.notifyAll();
-                listener.renderingResumed();
             }
+            listener.renderingResumed();
             return positive;
         } else {
             return positive;

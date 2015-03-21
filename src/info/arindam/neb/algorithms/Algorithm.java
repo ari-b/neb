@@ -1,6 +1,7 @@
 package info.arindam.neb.algorithms;
 
 import info.arindam.neb.Engine;
+import java.awt.Dimension;
 
 /**
  *
@@ -8,6 +9,8 @@ import info.arindam.neb.Engine;
  */
 public interface Algorithm {
     public int getNegativeMultiplier(int processorCount);
+
+    public Object createNegativeBuffer(Dimension positiveSize);
 
     public void run(Engine.Negative negative);
 
