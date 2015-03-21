@@ -1,7 +1,8 @@
 package info.arindam.neb;
 
-import java.util.HashMap;
+import java.awt.Dimension;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -10,16 +11,16 @@ import java.util.Map;
  */
 public class Neb extends javax.swing.JPanel implements Engine.Listener {
 
-    private Engine e;
+    private final Engine engine;
 
     /**
      * Creates new form Neb
      */
     public Neb() {
         initComponents();
-        e = new Engine(this);
-        e.setAlgorithm((String) algorithmList.getSelectedItem());
-        e.render();
+        engine = new Engine(this);
+        engine.setAlgorithm((String) algorithmList.getSelectedItem());
+        engine.render();
     }
 
     /**
@@ -31,8 +32,8 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
     private void initComponents() {
 
         jTextField1 = new javax.swing.JTextField();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        canvas = new javax.swing.JPanel();
+        dashboard = new javax.swing.JPanel();
         algorithmLabel = new javax.swing.JLabel();
         algorithmList = new javax.swing.JComboBox();
         parameterLabel = new javax.swing.JLabel();
@@ -60,21 +61,29 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         applyButton = new javax.swing.JButton();
         logLabel = new javax.swing.JLabel();
         renderButton = new javax.swing.JButton();
+        logPane = new javax.swing.JScrollPane();
+        logArea = new javax.swing.JTextArea();
         statusLabel = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
 
         jTextField1.setText("jTextField1");
 
-        jPanel1.setPreferredSize(new java.awt.Dimension(640, 640));
+        canvas.setMinimumSize(new java.awt.Dimension(640, 640));
+        canvas.setPreferredSize(new java.awt.Dimension(640, 640));
+        canvas.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                canvasComponentResized(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout canvasLayout = new javax.swing.GroupLayout(canvas);
+        canvas.setLayout(canvasLayout);
+        canvasLayout.setHorizontalGroup(
+            canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 640, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        canvasLayout.setVerticalGroup(
+            canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 640, Short.MAX_VALUE)
         );
 
@@ -155,18 +164,22 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        logArea.setColumns(20);
+        logArea.setRows(5);
+        logPane.setViewportView(logArea);
+
+        javax.swing.GroupLayout dashboardLayout = new javax.swing.GroupLayout(dashboard);
+        dashboard.setLayout(dashboardLayout);
+        dashboardLayout.setHorizontalGroup(
+            dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dashboardLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(dashboardLayout.createSequentialGroup()
                         .addComponent(logLabel)
-                        .addContainerGap(235, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addContainerGap(214, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
+                        .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(algorithmLabel)
                             .addComponent(parameter1Label)
                             .addComponent(parameter2Label)
@@ -180,8 +193,8 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
                             .addComponent(parameterLabel)
                             .addComponent(parameter10Label))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(parameter10Value)
                                 .addComponent(parameter9Value, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                                 .addComponent(parameter8Value)
@@ -193,69 +206,72 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
                                 .addComponent(parameter2Value)
                                 .addComponent(parameter1Value))
                             .addComponent(algorithmList, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGroup(dashboardLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(renderButton))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGroup(dashboardLayout.createSequentialGroup()
                         .addComponent(resetButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(applyButton))))
+                        .addComponent(applyButton))
+                    .addComponent(logPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        dashboardLayout.setVerticalGroup(
+            dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dashboardLayout.createSequentialGroup()
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(algorithmLabel)
                     .addComponent(algorithmList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addComponent(parameterLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter1Label)
                     .addComponent(parameter1Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter2Label)
                     .addComponent(parameter2Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter3Label)
                     .addComponent(parameter3Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter4Label)
                     .addComponent(parameter4Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter5Label)
                     .addComponent(parameter5Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter6Label)
                     .addComponent(parameter6Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter7Label)
                     .addComponent(parameter7Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter8Label)
                     .addComponent(parameter8Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter9Label)
                     .addComponent(parameter9Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter10Label)
                     .addComponent(parameter10Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resetButton)
                     .addComponent(applyButton))
                 .addGap(18, 18, 18)
                 .addComponent(logLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logPane)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(renderButton))
         );
 
@@ -269,9 +285,9 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(canvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(statusLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -281,11 +297,11 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
+                    .addComponent(dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(canvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(statusLabel)
                     .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -294,30 +310,50 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void algorithmListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algorithmListActionPerformed
-        e.setAlgorithm((String) algorithmList.getSelectedItem());
+        engine.setAlgorithm((String) algorithmList.getSelectedItem());
     }//GEN-LAST:event_algorithmListActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        e.resetParameters();
+        engine.resetParameters();
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
-        System.out.println("Apply button clicked.");
+        LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
+        parameters.put(parameter1Label.getText(), parameter1Value.getText());
+        parameters.put(parameter2Label.getText(), parameter2Value.getText());
+        parameters.put(parameter3Label.getText(), parameter3Value.getText());
+        parameters.put(parameter4Label.getText(), parameter4Value.getText());
+        parameters.put(parameter5Label.getText(), parameter5Value.getText());
+        parameters.put(parameter6Label.getText(), parameter6Value.getText());
+        parameters.put(parameter7Label.getText(), parameter7Value.getText());
+        parameters.put(parameter8Label.getText(), parameter8Value.getText());
+        parameters.put(parameter9Label.getText(), parameter9Value.getText());
+        parameters.put(parameter10Label.getText(), parameter10Value.getText());
+        engine.setParameters(parameters);
     }//GEN-LAST:event_applyButtonActionPerformed
 
     private void renderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renderButtonActionPerformed
-        e.render();
+        engine.render();
     }//GEN-LAST:event_renderButtonActionPerformed
+
+    private void canvasComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_canvasComponentResized
+        Dimension canvasSize = canvas.getSize();
+        if (canvasSize.width > 0 && canvasSize.height > 0) {
+            engine.setRasterSize(canvasSize);
+        }
+    }//GEN-LAST:event_canvasComponentResized
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel algorithmLabel;
     private javax.swing.JComboBox algorithmList;
     private javax.swing.JButton applyButton;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel canvas;
+    private javax.swing.JPanel dashboard;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextArea logArea;
     private javax.swing.JLabel logLabel;
+    private javax.swing.JScrollPane logPane;
     private javax.swing.JLabel parameter10Label;
     private javax.swing.JTextField parameter10Value;
     private javax.swing.JLabel parameter1Label;
@@ -363,7 +399,7 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
 
     @Override
     public void renderingEnded() {
-        jPanel1.getGraphics().drawImage(e.getPositive(), 0, 0, null);
+        canvas.getGraphics().drawImage(engine.getPositive(), 0, 0, null);
         progressBar.setIndeterminate(false);
         statusLabel.setText("Rendering ended.");
     }
@@ -374,7 +410,7 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
     }
 
     @Override
-    public void algorithmSet(HashMap<String, String> newParameters) {
+    public void algorithmSet(LinkedHashMap<String, String> newParameters) {
         Iterator i = newParameters.entrySet().iterator();
         Map.Entry p = (Map.Entry) i.next();
         parameter1Label.setText((String) p.getKey());
@@ -415,7 +451,7 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
     }
 
     @Override
-    public void parametersReset(HashMap<String, String> newParameters) {
+    public void parametersReset(LinkedHashMap<String, String> newParameters) {
         Iterator i = newParameters.entrySet().iterator();
         Map.Entry p = (Map.Entry) i.next();
         parameter1Label.setText((String) p.getKey());
@@ -448,5 +484,10 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         parameter10Label.setText((String) p.getKey());
         parameter10Value.setText((String) p.getValue());
         statusLabel.setText("Parameters reset.");
+    }
+
+    @Override
+    public void log(String message) {
+        logArea.append(message + "\n");
     }
 }

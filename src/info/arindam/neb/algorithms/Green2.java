@@ -1,15 +1,15 @@
 package info.arindam.neb.algorithms;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
 public class Green2 implements Algorithm {
-    public static HashMap<String, String> DEFAULT_PARAMETERS = null;
+    public static LinkedHashMap<String, String> DEFAULT_PARAMETERS = null;
 
-    public Green2 (HashMap<String, String> parameters) {
+    public Green2 (LinkedHashMap<String, String> parameters) {
 
     }
 

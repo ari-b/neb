@@ -1,7 +1,7 @@
 package info.arindam.neb.algorithms;
 
 import info.arindam.neb.Engine;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -9,13 +9,13 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
 public class Green1 implements Algorithm {
-    public static final HashMap<String, String> DEFAULT_PARAMETERS;
+    public static final LinkedHashMap<String, String> DEFAULT_PARAMETERS;
     private static final int TASK_SAMPLE_SIZE = 100;
     private final int iterationLimit, colourShift, sampleSize;
     private final double minX, minY, rangeX, rangeY, escapeDistance;
 
     static {
-        DEFAULT_PARAMETERS = new HashMap<>();
+        DEFAULT_PARAMETERS = new LinkedHashMap<>();
         DEFAULT_PARAMETERS.put("min_x", "-2.0");
         DEFAULT_PARAMETERS.put("min_y", "-1.5");
         DEFAULT_PARAMETERS.put("range_x", "3.0");
@@ -28,7 +28,7 @@ public class Green1 implements Algorithm {
         DEFAULT_PARAMETERS.put("--", "--");
     }
 
-    public Green1(HashMap<String, String> parameters) {
+    public Green1(LinkedHashMap<String, String> parameters) {
         minX = Double.parseDouble(parameters.get("min_x"));
         minY = Double.parseDouble(parameters.get("min_y"));
         rangeX = Double.parseDouble(parameters.get("range_x"));

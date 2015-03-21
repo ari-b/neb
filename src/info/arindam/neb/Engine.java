@@ -3,9 +3,10 @@ package info.arindam.neb;
 import info.arindam.neb.algorithms.Algorithm;
 import info.arindam.neb.algorithms.Green1;
 import info.arindam.neb.algorithms.Green2;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,14 +15,14 @@ import java.util.logging.Logger;
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
-public class Engine {
+public class Engine { // TODO: Add safeguards.
 
     public static class Positive extends BufferedImage {
 
         public int[] buffer;
 
-        public Positive(int width, int height) {
-            super(width, height, BufferedImage.TYPE_INT_ARGB);
+        public Positive(Dimension rasterSize) {
+            super(rasterSize.width, rasterSize.height, BufferedImage.TYPE_INT_ARGB);
             buffer = ((DataBufferInt) this.getRaster().getDataBuffer()).getData();
         }
     }
@@ -36,12 +37,12 @@ public class Engine {
         // #buffer holds the output of the thread this negative is assigned to.
         public int[][] buffer;
         // #data holds any other data that the algorithm might need.
-        public HashMap<String, Object> data;
+        public LinkedHashMap<String, Object> data;
 
-        Negative(int rasterWidth, int rasterHeight) {
+        Negative(Dimension rasterSize) {
             super();
-            buffer = new int[rasterWidth][rasterHeight];
-            data = new HashMap();
+            buffer = new int[rasterSize.width][rasterSize.height];
+            data = new LinkedHashMap();
         }
     }
 
@@ -119,7 +120,6 @@ public class Engine {
     }
 
     public static interface Listener {
-
         public void renderingBegun();
 
         public void renderingPaused();
@@ -130,28 +130,29 @@ public class Engine {
 
         public void errorOccurred();
 
-        public void algorithmSet(HashMap<String, String> newParameters);
+        public void algorithmSet(LinkedHashMap<String, String> newParameters);
 
         public void parametersSet();
 
-        public void parametersReset(HashMap<String, String> newParameters);
+        public void parametersReset(LinkedHashMap<String, String> newParameters);
+
+        public void log(String message);
     }
 
-    private static int developedNegativeCount, sleepingThreadCount, rasterWidth, rasterHeight,
-            processorCount;
+    private int developedNegativeCount, sleepingThreadCount;
+    private Dimension rasterSize;
     private Negative[] negatives;
     private Positive positive;
-    private LinkedBlockingQueue<Task> taskQueue;
-    private NebThread[] threads;
+    private final LinkedBlockingQueue<Task> taskQueue;
+    private final NebThread[] threads;
     private final Object nebThreadLock = new Object(), engineLock = new Object();
     private Algorithm algorithm;
-    private Listener listener;
+    private final Listener listener;
     private boolean renderInProgress, canRun;
 
     public Engine(Listener listener) {
-        processorCount = Runtime.getRuntime().availableProcessors();
-        threads = new NebThread[processorCount];
-        rasterWidth = rasterHeight = 640; // TODO: Fix redundancy.
+        threads = new NebThread[Runtime.getRuntime().availableProcessors()]; // One thread each.
+        rasterSize = new Dimension(640, 640); // Set the raster size to a default of 640x640.
         renderInProgress = canRun = false;
         this.listener = listener;
         taskQueue = new LinkedBlockingQueue<>();
@@ -161,7 +162,7 @@ public class Engine {
         }
     }
 
-    private static Algorithm getAlgorithmInstance(String name, HashMap<String, String> parameters) {
+    private static Algorithm getAlgorithmInstance(String name, LinkedHashMap<String, String> parameters) {
         Algorithm algorithm;
 
         switch (name) {
@@ -177,7 +178,7 @@ public class Engine {
         return algorithm;
     }
 
-    private static HashMap<String, String> getAlgorithmDefaultParameters(String name) {
+    private static LinkedHashMap<String, String> getAlgorithmDefaultParameters(String name) {
         switch (name) {
             case "green_1":
                 return Green1.DEFAULT_PARAMETERS;
@@ -188,8 +189,12 @@ public class Engine {
         }
     }
 
+    public void setRasterSize(Dimension rasterSize) {
+        this.rasterSize = rasterSize;
+    }
+
     public boolean setAlgorithm(String name) { // TODO: Replace boolean signal with exception.
-        HashMap<String, String> parameters = getAlgorithmDefaultParameters(name);
+        LinkedHashMap<String, String> parameters = getAlgorithmDefaultParameters(name);
         algorithm = getAlgorithmInstance(name, parameters);
 
         listener.algorithmSet(parameters);
@@ -200,7 +205,7 @@ public class Engine {
         return algorithm.toString();
     }
 
-    public boolean setParameters(HashMap<String, String> parameters) {
+    public boolean setParameters(LinkedHashMap<String, String> parameters) {
         // TODO: Check parameter sanity.
         algorithm = getAlgorithmInstance(algorithm.toString(), parameters);
 
@@ -209,32 +214,35 @@ public class Engine {
     }
 
     public void resetParameters() {
-        HashMap<String, String> parameters = getAlgorithmDefaultParameters(algorithm.toString());
+        LinkedHashMap<String, String> parameters = getAlgorithmDefaultParameters(algorithm.toString());
         algorithm = getAlgorithmInstance(algorithm.toString(), parameters);
 
         listener.parametersReset(parameters);
     }
 
-    public HashMap<String, String> getParameters() {
+    public LinkedHashMap<String, String> getParameters() {
         return null;
     }
 
     public void render() {
+        int processorCount = Runtime.getRuntime().availableProcessors();
         int multiplier = algorithm.getNegativeMultiplier(processorCount);
         negatives = new Negative[threads.length * multiplier];
-        positive = new Positive(rasterWidth, rasterHeight);
+        positive = new Positive(rasterSize);
         developedNegativeCount = 0;
         sleepingThreadCount = 0;
         renderInProgress = canRun = true;
         listener.renderingBegun();
         int i = 0, j = 0, taskIterationGoal = algorithm.getTaskIterationGoal(processorCount);
         while (i < negatives.length) {
-            negatives[i] = new Negative(rasterWidth, rasterHeight);
+            negatives[i] = new Negative(rasterSize);
             negatives[i].data.put("class", j);
             taskQueue.add(new Task(negatives[i], algorithm, taskIterationGoal));
             i++;
             j = (j + 1) % multiplier;
         }
+        listener.log(String.format("Raster size: %dx%d\nNegatives: %d", rasterSize.width,
+                rasterSize.height, negatives.length));
     }
 
     // Returns the (partially) rendered positive or null, if no rendering has been done yet.
