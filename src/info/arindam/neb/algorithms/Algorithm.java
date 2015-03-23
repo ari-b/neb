@@ -2,6 +2,7 @@ package info.arindam.neb.algorithms;
 
 import info.arindam.neb.Engine;
 import java.awt.Dimension;
+import java.awt.image.DataBuffer;
 
 /**
  *
@@ -10,7 +11,7 @@ import java.awt.Dimension;
 public interface Algorithm {
     public int getNegativeMultiplier(int processorCount);
 
-    public Object createNegativeBuffer(Dimension positiveSize);
+    public DataBuffer createNegativeBuffer(Dimension rasterSize);
 
     public void run(Engine.Negative negative);
 

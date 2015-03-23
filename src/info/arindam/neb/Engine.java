@@ -5,6 +5,7 @@ import info.arindam.neb.algorithms.BBrot;
 import info.arindam.neb.algorithms.MBrot;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferInt;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -20,7 +21,6 @@ import java.util.logging.Logger;
 public class Engine { // TODO: Add safeguards.
 
     public static class Positive extends BufferedImage {
-
         public int[] buffer;
 
         public Positive(Dimension rasterSize) {
@@ -35,14 +35,15 @@ public class Engine { // TODO: Add safeguards.
      i.e. the final image.
      */
     public class Negative {
-
         // #buffer holds the output of the thread this negative is assigned to.
-        public Object buffer;
+        public DataBuffer buffer;
+        public Dimension size;
         // #data holds any other data that the algorithm might need.
         public HashMap<String, Object> data;
 
-        Negative(Object buffer) {
+        Negative(DataBuffer buffer, Dimension size) {
             this.buffer = buffer;
+            this.size = size;
             data = new HashMap<>();
         }
     }
@@ -248,7 +249,7 @@ public class Engine { // TODO: Add safeguards.
         listener.renderingBegun();
         int i = 0, j = 0, taskIterationGoal = algorithm.getTaskIterationGoal(processorCount);
         while (i < negatives.length) {
-            negatives[i] = new Negative(algorithm.createNegativeBuffer(rasterSize));
+            negatives[i] = new Negative(algorithm.createNegativeBuffer(rasterSize), rasterSize);
             negatives[i].data.put("residue_class", j);
             taskQueue.add(new Task(negatives[i], algorithm, taskIterationGoal));
             i++;

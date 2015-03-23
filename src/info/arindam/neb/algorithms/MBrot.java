@@ -1,6 +1,7 @@
 package info.arindam.neb.algorithms;
 
 import java.awt.Dimension;
+import java.awt.image.DataBufferUShort;
 import java.util.LinkedHashMap;
 
 /**
@@ -20,8 +21,8 @@ public class MBrot implements Algorithm {
         DEFAULT_PARAMETERS.put("range_y", "3.0");
         DEFAULT_PARAMETERS.put("iteration_limit", "100");
         DEFAULT_PARAMETERS.put("escape_distance", "2.0");
-        DEFAULT_PARAMETERS.put("colour", "blue");
         DEFAULT_PARAMETERS.put("degree", "2");
+        DEFAULT_PARAMETERS.put("colour", "blue");
         DEFAULT_PARAMETERS.put("aa", "1");
         DEFAULT_PARAMETERS.put("--", "--");
     }
@@ -74,7 +75,7 @@ public class MBrot implements Algorithm {
     }
 
     @Override
-    public int[][] createNegativeBuffer(Dimension positiveSize) {
-        return new int[positiveSize.width][positiveSize.height];
+    public DataBufferUShort createNegativeBuffer(Dimension rasterSize) {
+        return new DataBufferUShort((int) (rasterSize.width * rasterSize.height), 2);
     }
 }

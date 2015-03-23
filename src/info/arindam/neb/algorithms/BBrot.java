@@ -2,6 +2,7 @@ package info.arindam.neb.algorithms;
 
 import info.arindam.neb.Engine;
 import java.awt.Dimension;
+import java.awt.image.DataBufferUShort;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,11 +23,11 @@ public class BBrot implements Algorithm {
         DEFAULT_PARAMETERS.put("min_y", "-1.5");
         DEFAULT_PARAMETERS.put("range_x", "3.0");
         DEFAULT_PARAMETERS.put("range_y", "3.0");
-        DEFAULT_PARAMETERS.put("sample_size", "10000000");
         DEFAULT_PARAMETERS.put("iteration_limit", "100");
         DEFAULT_PARAMETERS.put("escape_distance", "2.0");
-        DEFAULT_PARAMETERS.put("colour", "blue");
         DEFAULT_PARAMETERS.put("degree", "2");
+        DEFAULT_PARAMETERS.put("sample_size", "10000000");
+        DEFAULT_PARAMETERS.put("colour", "blue");
         DEFAULT_PARAMETERS.put("--", "--");
     }
 
@@ -59,7 +60,6 @@ public class BBrot implements Algorithm {
 
     @Override
     public void run(Engine.Negative negative) { // TODO: Use "advanced probabilistic techniques".
-        int[][] buffer = (int[][]) negative.buffer;
         for (int i = 1; i <= TASK_SAMPLE_SIZE; i++) {
             int j, bufferX, bufferY; // location of (zR, zI) in histogram
             double cR, cI, zR, zI, p;
@@ -87,9 +87,10 @@ public class BBrot implements Algorithm {
             for (j = 0; j < iterationLimit; j++) {
                 // Is the point within the rendering region?
                 if (zR >= minX && zR - minX <= rangeX && zI >= minY && zI - minY <= rangeY) {
-                    bufferX = (int) (((zR - minX) / rangeX) * buffer.length);
-                    bufferY = (int) (((zI - minY) / rangeY) * buffer[0].length);
-                    buffer[bufferX][bufferY]++;
+                    bufferX = (int) (((zR - minX) / rangeX) * negative.size.width);
+                    bufferY = (int) (((zI - minY) / rangeY) * negative.size.height);
+                    negative.buffer.setElem(bufferY * negative.size.width + bufferX,
+                            negative.buffer.getElem(bufferY * negative.size.width + bufferX) + 1);
                 }
                 for (int k = 1; k < degree; k++) {
                     p = zR;
@@ -104,14 +105,13 @@ public class BBrot implements Algorithm {
 
     @Override
     public void process(Engine.Negative[] negatives, Engine.Positive positive) {
-        int[][] histogram = new int[((int[][]) negatives[0].buffer).length]
-                [((int[][]) negatives[0].buffer).length];
+        int[][] histogram = new int[negatives[0].size.width][negatives[0].size.height];
         int max = 0; // Holds the maximum of all values in the "histogram".
 
         for (int i = 0; i < histogram.length; i++) {
             for (int j = 0; j < histogram[0].length; j++) {
                 for (Engine.Negative negative : negatives) {
-                    histogram[i][j] += ((int[][]) negative.buffer)[i][j];
+                    histogram[i][j] += negative.buffer.getElem(j * negative.size.width + i);
                 }
                 max = max < histogram[i][j] ? histogram[i][j] : max;
             }
@@ -136,7 +136,7 @@ public class BBrot implements Algorithm {
     }
 
     @Override
-    public int[][] createNegativeBuffer(Dimension positiveSize) {
-        return new int[positiveSize.width][positiveSize.height];
+    public DataBufferUShort createNegativeBuffer(Dimension rasterSize) {
+        return new DataBufferUShort((int) (rasterSize.getWidth() * rasterSize.getHeight()), 1);
     }
 }
