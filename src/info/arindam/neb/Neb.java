@@ -1,14 +1,31 @@
 package info.arindam.neb;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
 
 /**
  *
  * @author Arindam Biswas <arindam dot b at eml dot cc>
  */
-public class Neb extends javax.swing.JPanel implements Engine.Listener {
+public class Neb extends JPanel implements Engine.Listener {
     private final Engine engine;
     private int renderedNegativeCount;
 
@@ -19,7 +36,7 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         initComponents();
         engine = new Engine(this);
         engine.setAlgorithm((String) algorithmList.getSelectedItem());
-        engine.render();
+        engine.start();
     }
 
     /**
@@ -30,68 +47,54 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        canvas = new javax.swing.JPanel();
-        dashboard = new javax.swing.JPanel();
-        algorithmLabel = new javax.swing.JLabel();
-        algorithmList = new javax.swing.JComboBox();
-        parameterLabel = new javax.swing.JLabel();
-        parameter1Label = new javax.swing.JLabel();
-        parameter2Label = new javax.swing.JLabel();
-        parameter3Label = new javax.swing.JLabel();
-        parameter4Label = new javax.swing.JLabel();
-        parameter5Label = new javax.swing.JLabel();
-        parameter6Label = new javax.swing.JLabel();
-        parameter7Label = new javax.swing.JLabel();
-        parameter8Label = new javax.swing.JLabel();
-        parameter9Label = new javax.swing.JLabel();
-        parameter10Label = new javax.swing.JLabel();
-        parameter1Value = new javax.swing.JTextField();
-        parameter2Value = new javax.swing.JTextField();
-        parameter3Value = new javax.swing.JTextField();
-        parameter4Value = new javax.swing.JTextField();
-        parameter5Value = new javax.swing.JTextField();
-        parameter6Value = new javax.swing.JTextField();
-        parameter7Value = new javax.swing.JTextField();
-        parameter8Value = new javax.swing.JTextField();
-        parameter9Value = new javax.swing.JTextField();
-        parameter10Value = new javax.swing.JTextField();
-        resetButton = new javax.swing.JButton();
-        applyButton = new javax.swing.JButton();
-        logLabel = new javax.swing.JLabel();
-        renderButton = new javax.swing.JButton();
-        logPane = new javax.swing.JScrollPane();
-        logArea = new javax.swing.JTextArea();
-        statusLabel = new javax.swing.JLabel();
-        progressBar = new javax.swing.JProgressBar();
+        jTextField1 = new JTextField();
+        dashboard = new JPanel();
+        algorithmLabel = new JLabel();
+        algorithmList = new JComboBox();
+        parameterLabel = new JLabel();
+        parameter1Label = new JLabel();
+        parameter2Label = new JLabel();
+        parameter3Label = new JLabel();
+        parameter4Label = new JLabel();
+        parameter5Label = new JLabel();
+        parameter6Label = new JLabel();
+        parameter7Label = new JLabel();
+        parameter8Label = new JLabel();
+        parameter9Label = new JLabel();
+        parameter10Label = new JLabel();
+        parameter1Value = new JTextField();
+        parameter2Value = new JTextField();
+        parameter3Value = new JTextField();
+        parameter4Value = new JTextField();
+        parameter5Value = new JTextField();
+        parameter6Value = new JTextField();
+        parameter7Value = new JTextField();
+        parameter8Value = new JTextField();
+        parameter9Value = new JTextField();
+        parameter10Value = new JTextField();
+        resetButton = new JButton();
+        applyButton = new JButton();
+        logLabel = new JLabel();
+        renderButton = new JButton();
+        logPane = new JScrollPane();
+        logArea = new JTextArea();
+        statusLabel = new JLabel();
+        progressBar = new JProgressBar();
+        canvas = new Canvas();
 
         jTextField1.setText("jTextField1");
 
-        canvas.setMinimumSize(new java.awt.Dimension(640, 640));
-        canvas.setPreferredSize(new java.awt.Dimension(640, 640));
-
-        javax.swing.GroupLayout canvasLayout = new javax.swing.GroupLayout(canvas);
-        canvas.setLayout(canvasLayout);
-        canvasLayout.setHorizontalGroup(
-            canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        canvasLayout.setVerticalGroup(
-            canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        algorithmLabel.setFont(algorithmLabel.getFont().deriveFont(algorithmLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        algorithmLabel.setFont(algorithmLabel.getFont().deriveFont(algorithmLabel.getFont().getStyle() | Font.BOLD));
         algorithmLabel.setText("Algorithm");
 
-        algorithmList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "bbrot", "mbrot" }));
-        algorithmList.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        algorithmList.setModel(new DefaultComboBoxModel(new String[] { "bbrot", "mbrot" }));
+        algorithmList.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 algorithmListActionPerformed(evt);
             }
         });
 
-        parameterLabel.setFont(parameterLabel.getFont().deriveFont(parameterLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        parameterLabel.setFont(parameterLabel.getFont().deriveFont(parameterLabel.getFont().getStyle() | Font.BOLD));
         parameterLabel.setText("Parameters");
 
         parameter1Label.setText("1");
@@ -135,25 +138,25 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         parameter10Value.setText("--");
 
         resetButton.setText("Reset");
-        resetButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 resetButtonActionPerformed(evt);
             }
         });
 
         applyButton.setText("Apply");
-        applyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        applyButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 applyButtonActionPerformed(evt);
             }
         });
 
-        logLabel.setFont(logLabel.getFont().deriveFont(logLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        logLabel.setFont(logLabel.getFont().deriveFont(logLabel.getFont().getStyle() | Font.BOLD));
         logLabel.setText("Log");
 
         renderButton.setText("Render");
-        renderButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        renderButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 renderButtonActionPerformed(evt);
             }
         });
@@ -161,12 +164,11 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         logArea.setEditable(false);
         logPane.setViewportView(logArea);
 
-        javax.swing.GroupLayout dashboardLayout = new javax.swing.GroupLayout(dashboard);
+        GroupLayout dashboardLayout = new GroupLayout(dashboard);
         dashboard.setLayout(dashboardLayout);
-        dashboardLayout.setHorizontalGroup(
-            dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        dashboardLayout.setHorizontalGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(parameter1Label)
                     .addComponent(parameter2Label)
                     .addComponent(parameter3Label)
@@ -179,121 +181,127 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
                     .addComponent(parameterLabel)
                     .addComponent(parameter10Label)
                     .addComponent(algorithmLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(parameter9Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter8Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter7Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter6Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter4Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter3Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter2Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(parameter1Value, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(algorithmList, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(parameter5Value, javax.swing.GroupLayout.Alignment.TRAILING)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                    .addComponent(parameter9Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter8Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter7Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter6Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter4Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter3Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter2Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(parameter1Value, GroupLayout.Alignment.TRAILING)
+                    .addComponent(algorithmList, GroupLayout.Alignment.TRAILING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(parameter5Value, GroupLayout.Alignment.TRAILING)
                     .addComponent(parameter10Value)))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
+            .addGroup(GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(renderButton))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
+            .addGroup(GroupLayout.Alignment.TRAILING, dashboardLayout.createSequentialGroup()
                 .addComponent(resetButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(applyButton))
             .addGroup(dashboardLayout.createSequentialGroup()
                 .addComponent(logLabel)
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(logPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(logPane, GroupLayout.Alignment.TRAILING)
         );
-        dashboardLayout.setVerticalGroup(
-            dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        dashboardLayout.setVerticalGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(dashboardLayout.createSequentialGroup()
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(algorithmLabel)
-                    .addComponent(algorithmList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(algorithmList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addComponent(parameterLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter1Label)
-                    .addComponent(parameter1Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter1Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter2Label)
-                    .addComponent(parameter2Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter2Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter3Label)
-                    .addComponent(parameter3Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter3Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter4Label)
-                    .addComponent(parameter4Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter4Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter5Label)
-                    .addComponent(parameter5Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter5Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter6Label)
-                    .addComponent(parameter6Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter6Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter7Label)
-                    .addComponent(parameter7Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter7Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter8Label)
-                    .addComponent(parameter8Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter8Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter9Label)
-                    .addComponent(parameter9Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter9Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(parameter10Label)
-                    .addComponent(parameter10Value, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(dashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameter10Value, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dashboardLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(resetButton)
                     .addComponent(applyButton))
                 .addGap(18, 18, 18)
                 .addComponent(logLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(logPane, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(logPane, GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(renderButton))
         );
 
         statusLabel.setText("Idle.");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        GroupLayout canvasLayout = new GroupLayout(canvas);
+        canvas.setLayout(canvasLayout);
+        canvasLayout.setHorizontalGroup(canvasLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        canvasLayout.setVerticalGroup(canvasLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(statusLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 628, Short.MAX_VALUE)
-                        .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 616, Short.MAX_VALUE)
+                        .addComponent(progressBar, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(canvas, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
+                        .addComponent(canvas, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(dashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(dashboard, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(canvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(progressBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(statusLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(dashboard, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(canvas, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(progressBar, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(statusLabel, GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -327,40 +335,40 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel algorithmLabel;
-    private javax.swing.JComboBox algorithmList;
-    private javax.swing.JButton applyButton;
-    private javax.swing.JPanel canvas;
-    private javax.swing.JPanel dashboard;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextArea logArea;
-    private javax.swing.JLabel logLabel;
-    private javax.swing.JScrollPane logPane;
-    private javax.swing.JLabel parameter10Label;
-    private javax.swing.JTextField parameter10Value;
-    private javax.swing.JLabel parameter1Label;
-    private javax.swing.JTextField parameter1Value;
-    private javax.swing.JLabel parameter2Label;
-    private javax.swing.JTextField parameter2Value;
-    private javax.swing.JLabel parameter3Label;
-    private javax.swing.JTextField parameter3Value;
-    private javax.swing.JLabel parameter4Label;
-    private javax.swing.JTextField parameter4Value;
-    private javax.swing.JLabel parameter5Label;
-    private javax.swing.JTextField parameter5Value;
-    private javax.swing.JLabel parameter6Label;
-    private javax.swing.JTextField parameter6Value;
-    private javax.swing.JLabel parameter7Label;
-    private javax.swing.JTextField parameter7Value;
-    private javax.swing.JLabel parameter8Label;
-    private javax.swing.JTextField parameter8Value;
-    private javax.swing.JLabel parameter9Label;
-    private javax.swing.JTextField parameter9Value;
-    private javax.swing.JLabel parameterLabel;
-    private javax.swing.JProgressBar progressBar;
-    private javax.swing.JButton renderButton;
-    private javax.swing.JButton resetButton;
-    private javax.swing.JLabel statusLabel;
+    private JLabel algorithmLabel;
+    private JComboBox algorithmList;
+    private JButton applyButton;
+    private Canvas canvas;
+    private JPanel dashboard;
+    private JTextField jTextField1;
+    private JTextArea logArea;
+    private JLabel logLabel;
+    private JScrollPane logPane;
+    private JLabel parameter10Label;
+    private JTextField parameter10Value;
+    private JLabel parameter1Label;
+    private JTextField parameter1Value;
+    private JLabel parameter2Label;
+    private JTextField parameter2Value;
+    private JLabel parameter3Label;
+    private JTextField parameter3Value;
+    private JLabel parameter4Label;
+    private JTextField parameter4Value;
+    private JLabel parameter5Label;
+    private JTextField parameter5Value;
+    private JLabel parameter6Label;
+    private JTextField parameter6Value;
+    private JLabel parameter7Label;
+    private JTextField parameter7Value;
+    private JLabel parameter8Label;
+    private JTextField parameter8Value;
+    private JLabel parameter9Label;
+    private JTextField parameter9Value;
+    private JLabel parameterLabel;
+    private JProgressBar progressBar;
+    private JButton renderButton;
+    private JButton resetButton;
+    private JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -386,7 +394,7 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
         new Thread() {
             @Override
             public void run() {
-                canvas.getGraphics().drawImage(engine.getPositive(), 0, 0, null);
+                canvas.setImage(engine.getPositive());
             }
         }.start();
         progressBar.setIndeterminate(false);
@@ -487,10 +495,50 @@ public class Neb extends javax.swing.JPanel implements Engine.Listener {
             new Thread() {
                 @Override
                 public void run() {
-                    canvas.getGraphics().drawImage(engine.getPositive(), 0, 0, null);
+                    canvas.setImage(engine.getPositive());
                 }
             }.start();
         }
         statusLabel.setText("Negative rendered.");
+    }
+
+    public static class Canvas extends JPanel {
+
+        private BufferedImage image;
+
+        /**
+         * Creates new form Panel
+         */
+        public Canvas() {
+            super();
+            initComponents();
+        }
+
+        public void setImage(BufferedImage image) {
+            this.image = image;
+            repaint();
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponents(g);
+            g.drawImage(image, 0, 0, null);
+        }
+
+        /**
+         * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+         * modify this code. The content of this method is always regenerated by the Form Editor.
+         */
+        // <editor-fold defaultstate="collapsed" desc="Generated Code">
+        @SuppressWarnings(value = "unchecked")
+        private void initComponents() {
+            setMinimumSize(new Dimension(640, 640));
+            GroupLayout layout = new GroupLayout(this);
+            this.setLayout(layout);
+            layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 640, Short.MAX_VALUE));
+            layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 640, Short.MAX_VALUE));
+        } // </editor-fold>
+        // Variables declaration - do not modify
+        // End of variables declaration
     }
 }

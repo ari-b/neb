@@ -23,7 +23,7 @@ public class BBrot implements Algorithm {
         DEFAULT_PARAMETERS.put("min_y", "-1.5");
         DEFAULT_PARAMETERS.put("range_x", "3.0");
         DEFAULT_PARAMETERS.put("range_y", "3.0");
-        DEFAULT_PARAMETERS.put("iteration_limit", "100");
+        DEFAULT_PARAMETERS.put("iteration_limit", "500");
         DEFAULT_PARAMETERS.put("escape_distance", "2.0");
         DEFAULT_PARAMETERS.put("degree", "2");
         DEFAULT_PARAMETERS.put("sample_size", "10000000");
