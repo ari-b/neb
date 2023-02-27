@@ -34,7 +34,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="info.arindam.neb.Neb" name="neb2">
+    <Component class="site.bsws.neb.Neb" name="neb2">
     </Component>
   </SubComponents>
 </Form>

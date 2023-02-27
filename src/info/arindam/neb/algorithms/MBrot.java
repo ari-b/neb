@@ -1,4 +1,4 @@
-package info.arindam.neb.algorithms;
+package site.bsws.neb.algorithms;
 
 import java.awt.Dimension;
 import java.awt.image.DataBufferUShort;
@@ -55,12 +55,12 @@ public class MBrot implements Algorithm {
     }
 
     @Override
-    public void run(info.arindam.neb.Engine.Negative negative) {
+    public void run(site.bsws.neb.Engine.Negative negative) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void process(info.arindam.neb.Engine.Negative[] negatives, info.arindam.neb.Engine.Positive positive) {
+    public void process(site.bsws.neb.Engine.Negative[] negatives, site.bsws.neb.Engine.Positive positive) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

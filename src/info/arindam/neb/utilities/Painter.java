@@ -1,4 +1,4 @@
-package info.arindam.neb.utilities;
+package site.bsws.neb.utilities;
 
 /**
  *

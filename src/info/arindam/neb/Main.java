@@ -1,4 +1,4 @@
-package info.arindam.neb;
+package site.bsws.neb;
 
 import javax.swing.UIManager;
 
@@ -23,7 +23,7 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        neb2 = new info.arindam.neb.Neb();
+        neb2 = new site.bsws.neb.Neb();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Neb");
@@ -73,6 +73,6 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private info.arindam.neb.Neb neb2;
+    private site.bsws.neb.Neb neb2;
     // End of variables declaration//GEN-END:variables
 }

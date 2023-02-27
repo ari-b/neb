@@ -1,8 +1,8 @@
-package info.arindam.neb;
+package site.bsws.neb;
 
-import info.arindam.neb.algorithms.Algorithm;
-import info.arindam.neb.algorithms.BBrot;
-import info.arindam.neb.algorithms.MBrot;
+import site.bsws.neb.algorithms.Algorithm;
+import site.bsws.neb.algorithms.BBrot;
+import site.bsws.neb.algorithms.DLA;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Arindam Biswas <arindam dot b at eml dot cc>
+ * @author Arindam Biswas <arindam dot b at ftml dot net>
  */
 public class Engine {
     // TODO: Add safeguards.
@@ -252,8 +252,8 @@ public class Engine {
         switch (name) {
             case "bbrot":
                 return BBrot.class;
-            case "mbrot":
-                return MBrot.class;
+            case "dla":
+                return DLA.class;
             default:
                 return null;
         }

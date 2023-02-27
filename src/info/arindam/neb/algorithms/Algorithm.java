@@ -1,12 +1,12 @@
-package info.arindam.neb.algorithms;
+package site.bsws.neb.algorithms;
 
-import info.arindam.neb.Engine;
+import site.bsws.neb.Engine;
 import java.awt.Dimension;
 import java.awt.image.DataBuffer;
 
 /**
  *
- * @author Arindam Biswas <arindam dot b at eml dot cc>
+ * @author Arindam Biswas <arindam dot b at ftml dot net>
  */
 public interface Algorithm {
     public int getNegativeMultiplier(int processorCount);
