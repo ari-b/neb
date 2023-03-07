@@ -1,8 +1,8 @@
 package site.bsws.neb;
 
-import site.bsws.neb.algorithms.Algorithm;
-import site.bsws.neb.algorithms.BBrot;
-import site.bsws.neb.algorithms.DLA;
+import site.bsws.neb.alg.Algorithm;
+import site.bsws.neb.alg.BBrot;
+import site.bsws.neb.alg.DLA;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;

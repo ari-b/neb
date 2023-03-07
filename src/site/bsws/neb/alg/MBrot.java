@@ -1,4 +1,4 @@
-package site.bsws.neb.algorithms;
+package site.bsws.neb.alg;
 
 import java.awt.Dimension;
 import java.awt.image.DataBufferUShort;
@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 
 /**
  *
- * @author Arindam Biswas <arindam dot b at eml dot cc>
+ * @author Arindam Biswas <arindam at bsws dot site>
  */
 public class MBrot implements Algorithm {
     private final int iterationLimit, colourShift, degree, aaMultiplier;

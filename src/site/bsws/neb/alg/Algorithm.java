@@ -1,4 +1,4 @@
-package site.bsws.neb.algorithms;
+package site.bsws.neb.alg;
 
 import site.bsws.neb.Engine;
 import java.awt.Dimension;

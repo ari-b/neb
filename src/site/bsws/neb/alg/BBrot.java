@@ -1,4 +1,4 @@
-package site.bsws.neb.algorithms;
+package site.bsws.neb.alg;
 
 import site.bsws.neb.Engine;
 import java.awt.Dimension;
@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author Arindam Biswas <arindam dot b at ftml dot net>
  */
-public class DLA implements Algorithm {
+public class BBrot implements Algorithm {
 
     public static final LinkedHashMap<String, String> DEFAULT_PARAMETERS;
     private static final int TASK_SAMPLE_SIZE = 100;
@@ -31,7 +31,7 @@ public class DLA implements Algorithm {
         DEFAULT_PARAMETERS.put("--", "--");
     }
 
-    public DLA(LinkedHashMap<String, String> parameters) {
+    public BBrot(LinkedHashMap<String, String> parameters) {
         minX = Double.parseDouble(parameters.get("min_x"));
         minY = Double.parseDouble(parameters.get("min_y"));
         rangeX = Double.parseDouble(parameters.get("range_x"));
@@ -127,7 +127,7 @@ public class DLA implements Algorithm {
 
     @Override
     public String toString() {
-        return "dla";
+        return "bbrot";
     }
 
     @Override

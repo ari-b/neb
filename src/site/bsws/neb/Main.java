@@ -4,7 +4,7 @@ import javax.swing.UIManager;
 
 /**
  *
- * @author Arindam Biswas <arindam dot b at eml dot cc>
+ * @author Arindam Biswas <arindam at bsws dot site>
  */
 public class Main extends javax.swing.JFrame {
 
@@ -66,6 +66,7 @@ public class Main extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Main().setVisible(true);
             }
