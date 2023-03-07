@@ -1,4 +1,4 @@
 Neb
 ===
 
-A generative graphics algorithm test bed.
+An app that renders "Buddhabrots".
